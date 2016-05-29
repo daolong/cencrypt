@@ -410,10 +410,38 @@ static char *des_getmode(int mode) {
   }
 }
 
+static char *des_padding(const char *in)
+{
+  if (in == NULL) return NULL;
+  size_t in_len = strlen(in);
+  //DEBUG("in = %s \n", in);
+  //des_dump(in, in_len);
+  size_t out_len = 0;
+  int padding_value = 8;
+  if ((in_len % 8) == 0) {
+    out_len = in_len + 8;
+  } else {
+    out_len = ((in_len + 7) / 8) * 8;
+    padding_value = out_len - in_len;
+  }
+  DEBUG("in_len = %d, out_len = %d\n", in_len, out_len);
+  char *out = DO_MALLOC(out_len + 1);
+  if (out == NULL) return NULL;
+  DEBUG("padding value = %x\n", padding_value);
+  DO_CLEAR(out, padding_value, out_len + 1);
+  out[out_len] = '\0';
+  memcpy(out, in, in_len);
+  //DEBUG("out = %s \n", out);
+  //des_dump(out, out_len);
+  return out;
+}
+
+
 static void des_test_withmode(int mode)
 {
   DEBUG("\n\n== des_test_withmode (%s) ==\n", des_getmode(mode));  
-  char *testData = (char *)gTestData0;
+  char *testData = des_padding(gTestData0);
+  if (testData == NULL) return NULL;
   size_t out_len = 0;
   char *encrypted = encrypt_des((const char*)testData, strlen(testData), gPassword, mode, &out_len);
   if (encrypted != NULL) {
@@ -430,6 +458,7 @@ static void des_test_withmode(int mode)
     }
     DO_FREE(encrypted);
   }
+  DO_FREE(testData);
 }
 
 static void des_test() {
@@ -450,6 +479,6 @@ int main(int argc, char **argv)
   //http_test(); 
   //flow_test();
   //auth_rsa_test();  
-  //des_test();
+  des_test();
   return 0;
 }
