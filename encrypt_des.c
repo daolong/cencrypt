@@ -34,7 +34,7 @@ char *encrypt_des(const char *cleartext, size_t in_len, const char *key, int mod
       for (i = 0; i < text_len / 8; i ++) {
         memcpy((void*)&inputText, (cleartext + i * 8), 8);
         DES_ecb_encrypt(&inputText, &outputText, &keySchedule, DES_ENCRYPT);
-        memcpy((cipher + i * 8), outputText, 8);
+        memcpy((cipher + i * 8), (void*)&outputText, 8);
       }
 
       if (text_len % 8 != 0) {
@@ -44,7 +44,7 @@ char *encrypt_des(const char *cleartext, size_t in_len, const char *key, int mod
         memcpy((void*)&inputText, cleartext + tmp1, tmp2);
 
         DES_ecb_encrypt(&inputText, &outputText, &keySchedule, DES_ENCRYPT);
-        memcpy(cipher + tmp1, outputText, 8);
+        memcpy(cipher + tmp1, (void*)&outputText, 8);
       }
       return (char *)cipher;
     }
@@ -59,7 +59,7 @@ char *encrypt_des(const char *cleartext, size_t in_len, const char *key, int mod
       if (cipher == NULL) return NULL;
       memset(cipher, 0, *out_len);
       
-      memset(keyEncrypt, 0, 8);
+      memset((void*)&keyEncrypt, 0, 8);
       if (key_len <= 8) 
         memcpy((void*)&keyEncrypt, key, key_len);
       else 
@@ -84,7 +84,7 @@ char *encrypt_des(const char *cleartext, size_t in_len, const char *key, int mod
       if (cipher == NULL) return NULL;
       memset(cipher, 0, *out_len);
       
-      memset(keyEncrypt, 0, 8);
+      memset((void*)&keyEncrypt, 0, 8);
       if (key_len <= 8) 
         memcpy((void*)&keyEncrypt, key, key_len);
       else 
@@ -142,7 +142,7 @@ char *encrypt_des(const char *cleartext, size_t in_len, const char *key, int mod
       for (i = 0; i < text_len / 8; i ++) {
         memcpy((void*)&inputText, cleartext + i * 8, 8);
         DES_ecb3_encrypt(&inputText, &outputText, &ks1, &ks2, &ks3, DES_ENCRYPT);
-        memcpy(cipher + i * 8, outputText, 8);
+        memcpy(cipher + i * 8, (void*)&outputText, 8);
       }
 
       if (text_len % 8 != 0) {
@@ -152,7 +152,7 @@ char *encrypt_des(const char *cleartext, size_t in_len, const char *key, int mod
         memcpy((void*)&inputText, cleartext + tmp1, tmp2);
 
         DES_ecb3_encrypt(&inputText, &outputText, &ks1, &ks2, &ks3, DES_ENCRYPT);
-        memcpy(cipher + tmp1, outputText, 8);
+        memcpy(cipher + tmp1, (void*)&outputText, 8);
       }
 
       return (char *)cipher;
