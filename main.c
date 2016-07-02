@@ -264,7 +264,9 @@ static void http_test()
   sprintf(buffer, "name=%s&number=%s&class=%s&memo=%s", base64encode(TEST_NAME, &out_len),  base64encode(TEST_NUMBER, &out_len),
      base64encode(TEST_CLASS, &out_len),  base64encode(TEST_MEMO, &out_len));
   DEBUG("param = %s\n", buffer);
+  http_global_init();
   char *res = http_post(URL, (const char *)&buffer, NULL, &resp_size);
+  http_global_release();
   if (res != NULL) {
     DEBUG("%s : response =\n%s \n", __func__, res);
     char *content = getContent(res, resp_size);
@@ -352,7 +354,9 @@ static void auth_rsa_test()
       DO_CLEAR(buffer, 0, 512);
       sprintf(buffer, "data=%s", encoded);
       DEBUG("%s : encoded = %s \n", __func__, encoded);
+      http_global_init();
       char *res = http_post(URL, (const char *)&buffer, NULL, &resp_size);
+      http_global_release();
       if (res != NULL) {
         DEBUG("%s : response =\n%s \n", __func__, res);
         char *content = getContent(res, resp_size);
